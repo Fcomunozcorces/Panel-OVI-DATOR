@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ovidator · Asistente IA de Ferretería Oviedo</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --surface:#ffffff;
+    --surface-2:#fafafa;
+    --red:#FF0A00;
+    --red-soft:rgba(255,10,0,.08);
+    --text:#16161a;
+    --muted:#6b6b73;
+    --faint:#9a9aa2;
+    --line:rgba(0,0,0,.12);
+    --line-strong:rgba(0,0,0,.22);
+    --grid:rgba(0,0,0,.045);
+    --ok:#1fae6e;
+    --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.06);
+    --shadow-hover:0 4px 10px rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.12);
+    --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+    --mono:"Consolas","SF Mono",ui-monospace,Menlo,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:48px 48px;
+    background-position:center top;
+  }
+
+  body::before{
+    content:"";position:fixed;inset:0;
+    background:radial-gradient(1100px 480px at 50% -10%,var(--red-soft),transparent 62%);
+    pointer-events:none;z-index:0;
+  }
+
+  .wrap{
+    width:100%;max-width:1120px;margin:0 auto;
+    padding:40px 24px 24px;position:relative;z-index:1;flex:1;
+  }
+
+  /* ── Barra superior ── */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;flex-wrap:wrap;padding-bottom:8px;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{height:48px;width:auto;display:none}
+  .wordmark{
+    display:flex;align-items:center;gap:12px;
+    font-weight:700;font-size:26px;letter-spacing:-.5px;line-height:1;
+  }
+  .wordmark .bar{
+    width:6px;height:28px;background:var(--red);border-radius:1px;
+    box-shadow:0 0 14px rgba(255,10,0,.45);
+  }
+  .wordmark b{color:var(--text)}
+  .wordmark span{color:var(--red)}
+
+  .clock{text-align:right;font-family:var(--mono)}
+  .clock .time{font-size:22px;color:var(--text);letter-spacing:1px}
+  .clock .date{font-size:12px;color:var(--muted);text-transform:capitalize;margin-top:3px}
+
+  /* ── Hero ── */
+  .hero{padding:34px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--red);
+  }
+  .hero h1{
+    font-size:clamp(32px,5vw,50px);font-weight:700;
+    letter-spacing:-1.2px;line-height:1.04;margin-top:14px;
+  }
+  .hero h1 span{color:var(--red)}
+  .hero .lede{font-size:17px;color:var(--muted);margin-top:12px}
+
+  /* ── Section label ── */
+  .section-label{
+    display:flex;align-items:center;gap:14px;margin:30px 0 22px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+    color:var(--faint);text-transform:uppercase;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ── Grid ── */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:18px;
+  }
+
+  /* ── Tarjeta ── */
+  .app{
+    position:relative;display:block;text-decoration:none;color:inherit;
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:24px 24px 22px 28px;overflow:hidden;box-shadow:var(--shadow);
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+    opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;
+  }
+  .app::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--red);transition:width .18s ease,box-shadow .18s ease;
+  }
+  .app:hover,.app:focus-visible{
+    transform:translateY(-3px);border-color:var(--line-strong);
+    box-shadow:var(--shadow-hover);outline:none;
+  }
+  .app:hover::before,.app:focus-visible::before{width:7px;box-shadow:0 0 18px rgba(255,10,0,.55)}
+  .app:focus-visible{box-shadow:0 0 0 3px rgba(255,10,0,.35),var(--shadow-hover)}
+
+  .app-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .code{
+    font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;
+    color:var(--red);border:1px solid rgba(255,10,0,.3);background:var(--red-soft);
+    padding:4px 9px;border-radius:6px;
+  }
+  .status{
+    display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.1em;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 0 rgba(31,174,110,.5);animation:pulse 2.4s infinite;
+  }
+
+  .app h2{font-size:19px;font-weight:700;letter-spacing:-.2px;margin-bottom:8px}
+  .app p{font-size:13.5px;line-height:1.5;color:var(--muted)}
+
+  .app-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
+  }
+  .host{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .go{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
+  .go .arrow{color:var(--red);font-size:16px;transition:transform .18s ease}
+  .app:hover .go .arrow,.app:focus-visible .go .arrow{transform:translateX(5px)}
+
+  /* ── Footer ── */
+  footer{
+    position:relative;z-index:1;max-width:1120px;margin:0 auto;width:100%;
+    padding:22px 24px 36px;display:flex;justify-content:space-between;align-items:center;
+    gap:16px;flex-wrap:wrap;font-size:12px;color:var(--faint);
+  }
+  footer .ver{font-family:var(--mono)}
+
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(31,174,110,.4)}
+    70%{box-shadow:0 0 0 7px rgba(31,174,110,0)}
+    100%{box-shadow:0 0 0 0 rgba(31,174,110,0)}
+  }
+
+  @media (max-width:560px){
+    .wrap{padding:28px 16px 16px}
+    .clock{text-align:left}
+    .logo{height:40px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .app{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <img class="logo" id="logo" alt="Ferretería Oviedo">
+        <div class="wordmark" id="wordmark">
+          <span class="bar"></span>
+          <span>FERRETERÍA</span>&nbsp;<b>OVIEDO</b>
+        </div>
+      </div>
+      <div class="clock">
+        <div class="time" id="time">--:--</div>
+        <div class="date" id="date">—</div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="eyebrow">Portal de aplicaciones de inteligencia artificial</div>
+      <h1>Soy <span>Ovidator</span></h1>
+      <p class="lede">El asistente IA de Oviedo</p>
+    </div>
+
+    <div class="section-label">Herramientas operativas</div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>
+    <span>Uso interno · Ferretería Oviedo</span>
+    <span class="ver">portal v1.2</span>
+  </footer>
+
+<script>
+  /* ─────────────────────────────────────────────
+     LOGO: pega aquí el logo de Oviedo, ya sea en base64
+     (data:image/png;base64,XXXX...) o una URL https://...
+     Si lo dejas vacío, se muestra el texto de marca.
+     ───────────────────────────────────────────── */
+  const LOGO_SRC = "";
+
+  /* ─────────────────────────────────────────────
+     EDITA AQUÍ: nombres, descripciones, código y URL.
+     Para agregar una app nueva, copia un bloque { }.
+     ───────────────────────────────────────────── */
+  const APPS = [
+    {
+      code:"MTC",
+      name:"Traspasos Marticorena",
+      desc:"Análisis de quiebres y recomendación de traspasos hacia la sucursal Marticorena.",
+      url:"https://traspasos-marticorena.netlify.app/"
+    },
+    {
+      code:"CD",
+      name:"Traspasos CD",
+      desc:"Distribución desde el Centro de Distribución hacia las tiendas y marketplace.",
+      url:"https://traspaso-cd.netlify.app/"
+    },
+    {
+      code:"PRO",
+      name:"OviPro",
+      desc:"Asistente de vendedores.",
+      url:"https://ovipro.netlify.app/"
+    },
+    {
+      code:"CMP",
+      name:"Panel de Compras",
+      desc:"Gestión y seguimiento de compras a proveedores.",
+      url:"https://panel-compras.netlify.app/"
+    }
+  ];
+
+  /* Logo con fallback al texto de marca */
+  (function(){
+    const logo = document.getElementById("logo");
+    const wordmark = document.getElementById("wordmark");
+    if(LOGO_SRC){
+      logo.onload = () => { logo.style.display="block"; wordmark.style.display="none"; };
+      logo.onerror = () => { logo.style.display="none"; wordmark.style.display="flex"; };
+      logo.src = LOGO_SRC;
+    }
+  })();
+
+  /* Render de tarjetas */
+  const grid = document.getElementById("grid");
+  APPS.forEach((a, i) => {
+    const host = a.url.replace(/^https?:\/\//,"").replace(/\/$/,"");
+    const card = document.createElement("a");
+    card.className = "app";
+    card.href = a.url;
+    card.target = "_blank";
+    card.rel = "noopener";
+    card.style.animationDelay = (i * 70) + "ms";
+    card.setAttribute("aria-label", "Abrir " + a.name);
+    card.innerHTML = `
+      <div class="app-top">
+        <span class="code">${a.code}</span>
+        <span class="status"><span class="dot"></span>Operativa</span>
+      </div>
+      <h2>${a.name}</h2>
+      <p>${a.desc}</p>
+      <div class="app-foot">
+        <span class="host">${host}</span>
+        <span class="go">Abrir <span class="arrow">&rarr;</span></span>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  /* Reloj en vivo */
+  const fmtTime = new Intl.DateTimeFormat("es-CL",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const fmtDate = new Intl.DateTimeFormat("es-CL",{weekday:"long",day:"numeric",month:"long"});
+  const elTime = document.getElementById("time");
+  const elDate = document.getElementById("date");
+  function tick(){
+    const now = new Date();
+    elTime.textContent = fmtTime.format(now);
+    elDate.textContent = fmtDate.format(now);
+  }
+  tick();
+  setInterval(tick,1000);
+</script>
+</body>
+</html>
